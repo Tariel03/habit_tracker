@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { db } from './db';
 import Auth from './Auth';
 import Profile from "./Profile.tsx";
-// ... other imports
+import Footer from './Footer';
 
 export default function App() {
     const [user, setUser] = useState<any>(null);
-
+    const [activeTab, setActiveTab] = useState<"home" | "community" | "create" | "account">("home");
     useEffect(() => {
         // On load, check if "session" exists in our DB
         const session = db.getSession();
@@ -80,6 +80,7 @@ export default function App() {
                     onBack={() => setView('home')}
                 />
             )}
+            <Footer activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
     ) : (
         <Auth onAuth={handleAuth}/>
