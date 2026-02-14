@@ -1,10 +1,23 @@
 import { useState } from 'react';
 import logo from './assets/logo.png';
 
-export default function Auth({ onLogin }: { onLogin: () => void }) {
+// Update props to include onAuth
+export default function Auth({ onAuth }: { onAuth: (email: string, username?: string, pass?: string) => void }) {
     const [isSignUp, setIsSignUp] = useState(true);
-    // State to toggle password visibility
     const [showPassword, setShowPassword] = useState(false);
+
+    // New Input States
+    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = () => {
+        if (isSignUp && (!email || !username || !password)) return alert("Fill all fields");
+        if (!isSignUp && (!email || !password)) return alert("Enter email and password");
+
+        // Pass data up to App.tsx
+        onAuth(email, isSignUp ? username : undefined, password);
+    };
 
     return (
         <div style={styles.container}>
@@ -18,47 +31,44 @@ export default function Auth({ onLogin }: { onLogin: () => void }) {
             <div style={styles.card}>
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>Email</label>
-                    <input type="email" style={styles.input} placeholder="Enter your email" />
+                    <input
+                        type="email"
+                        style={styles.input}
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
                 </div>
 
                 {isSignUp && (
                     <div style={styles.inputGroup}>
                         <label style={styles.label}>Username</label>
-                        <input type="text" style={styles.input} placeholder="Choose a username" />
+                        <input
+                            type="text"
+                            style={styles.input}
+                            placeholder="Choose a username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
                     </div>
                 )}
 
                 <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        {isSignUp ? 'Create password' : 'Password'}
-                    </label>
+                    <label style={styles.label}>{isSignUp ? 'Create password' : 'Password'}</label>
                     <div style={styles.passwordWrapper}>
                         <input
                             type={showPassword ? "text" : "password"}
                             style={styles.input}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
-                        <span
-                            style={styles.eyeIcon}
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
+                        <span style={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>
                             {showPassword ? '🙈' : '👁️'}
                         </span>
                     </div>
                 </div>
 
-                {isSignUp && (
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>Repeat password</label>
-                        <div style={styles.passwordWrapper}>
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                style={styles.input}
-                            />
-                        </div>
-                    </div>
-                )}
-
-                <button style={styles.button} onClick={onLogin}>
+                <button style={styles.button} onClick={handleSubmit}>
                     {isSignUp ? 'Sign up' : 'Sign in'}
                 </button>
 
@@ -79,56 +89,63 @@ const styles: any = {
         minHeight: '100vh',
         width: '100%',
         background: 'linear-gradient(180deg, #E0C3FC 0%, #FBC2EB 100%)',
-        fontFamily: 'sans-serif',
+        fontFamily: "'Lexend', sans-serif",
     },
     logoSection: {
         textAlign: 'center',
-        marginBottom: '20px',
+        marginBottom: '40px',
     },
     iconBox: {
-        width: '100px',
-        height: '100px',
-        border: '2px solid #3182CE',
-        margin: '0 auto 10px',
+        width: '120px', // Bigger logo for bigger card
+        height: '120px',
+        border: '3px solid #3182CE',
+        margin: '0 auto 15px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'white',
-        borderRadius: '8px',
-        overflow: 'hidden'
+        borderRadius: '12px',
+        overflow: 'hidden',
+        boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
     },
-    logoImage: { width: '100%', height: '100%', objectFit: 'contain' },
-    title: { fontSize: '42px', margin: 0, fontWeight: '400', color: '#000' },
+    logoImage: { width: '80%', height: '80%', objectFit: 'contain' },
+    title: {
+        fontSize: '56px', // Scaled up title
+        margin: 0,
+        fontWeight: '500',
+        color: '#000',
+        letterSpacing: '-1px'
+    },
     card: {
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        padding: '40px',
-        borderRadius: '24px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        padding: '60px 80px', // Lots of internal breathing room
+        borderRadius: '40px',
         width: '90%',
-        maxWidth: '450px',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+        maxWidth: '850px', // Sweet spot for a "large" feel without being too wide
+        boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
         boxSizing: 'border-box',
-        textAlign: 'left', // FORCES CONTENT TO START FROM LEFT
+        textAlign: 'left',
     },
     inputGroup: {
-        marginBottom: '20px',
-        borderBottom: '1px solid #aaa',
-        textAlign: 'left', // ENSURES INDIVIDUAL GROUPS ARE LEFT-ALIGNED
+        marginBottom: '35px', // More space between fields
+        borderBottom: '2px solid #EEE', // Thicker, lighter line
+        transition: 'border-color 0.3s'
     },
     label: {
         display: 'block',
-        fontSize: '14px',
-        color: '#333',
-        marginBottom: '4px',
-        textAlign: 'left'
+        fontSize: '18px', // Bigger text
+        color: '#444',
+        marginBottom: '10px',
+        fontWeight: '500'
     },
     input: {
         width: '100%',
         border: 'none',
         outline: 'none',
         background: 'transparent',
-        padding: '8px 0',
-        fontSize: '16px',
-        textAlign: 'left' // FORCES INPUT CURSOR TO START AT LEFT
+        padding: '12px 0', // Taller clickable area
+        fontSize: '20px', // Much more readable
+        color: '#333'
     },
     passwordWrapper: {
         display: 'flex',
@@ -137,27 +154,30 @@ const styles: any = {
     },
     eyeIcon: {
         cursor: 'pointer',
-        fontSize: '20px',
-        padding: '0 5px',
-        userSelect: 'none'
+        fontSize: '24px',
+        padding: '0 10px',
+        color: '#666'
     },
     button: {
         width: '100%',
-        padding: '14px',
+        padding: '20px', // Chunky, premium-feeling button
         backgroundColor: '#9F7AEA',
         color: 'white',
         border: 'none',
-        borderRadius: '12px',
-        fontSize: '18px',
+        borderRadius: '20px',
+        fontSize: '22px',
         fontWeight: 'bold',
         marginTop: '20px',
         cursor: 'pointer',
+        boxShadow: '0 10px 20px rgba(159, 122, 234, 0.4)',
+        transition: 'transform 0.2s, background 0.2s',
     },
     toggleText: {
         textAlign: 'center',
-        marginTop: '20px',
+        marginTop: '25px',
         cursor: 'pointer',
-        color: '#333',
-        fontWeight: '600'
+        color: '#555',
+        fontSize: '18px',
+        fontWeight: '500'
     }
 };

@@ -1,30 +1,45 @@
-import { useState } from 'react'
-import './App.css'
-import HabitList from './HabitList';
-import Profile from './Profile';
-import Auth from "./Auth.tsx";
+import { useState, useEffect } from 'react';
+import { db } from './db';
+import Auth from './Auth';
+// ... other imports
 
-function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // New state
-    const [user] = useState({ name: 'Tariel', level: 5 });
-    const [habits] = useState([
-        { id: 1, title: 'Drink Water', completed: false },
-        { id: 2, title: 'Read 10 Pages', completed: true },
-    ]);
+export default function App() {
+    const [user, setUser] = useState<any>(null);
 
-    // If not logged in, show the Auth screen
-    if (!isLoggedIn) {
-        return <Auth onLogin={() => setIsLoggedIn(true)} />;
-    }
+    useEffect(() => {
+        // On load, check if "session" exists in our DB
+        const session = db.getSession();
+        if (session) setUser(session);
+    }, []);
 
-    // If logged in, show the main content
-    return (
-        <div className="app-container">
-            <Profile name={user.name} level={user.level} />
-            <HabitList habits={habits} />
-            <button onClick={() => setIsLoggedIn(false)} style={{margin: '20px'}}>Logout</button>
+    const handleAuth = (email: string, username?: string, password?: string) => {
+        const existingUser = db.findUser(email);
+
+        if (username) {
+            // REGISTER MODE
+            if (existingUser) return alert("User already exists!");
+
+            const newUser = { email, name: username, password, level: 1 };
+            db.saveUser(newUser);
+            db.setSession(newUser);
+            setUser(newUser);
+        } else {
+            // LOGIN MODE
+            if (existingUser && existingUser.password === password) {
+                db.setSession(existingUser);
+                setUser(existingUser);
+            } else {
+                alert("Invalid email or password");
+            }
+        }
+    };
+
+    return user ? (
+        <div className="main">
+            <h1>Welcome, {user.name}</h1>
+            <button onClick={() => { db.clearSession(); setUser(null); }}>Logout</button>
         </div>
+    ) : (
+        <Auth onAuth={handleAuth} />
     );
 }
-
-export default App
