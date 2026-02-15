@@ -1,7 +1,37 @@
-interface CommentsProps {
+import { useState } from 'react';
 
-}
-export default function Comments({ onBack }: { onBack: () => void }) {
+export default function Comments({ postId, onBack, currentUser }: any) {
+    // 1. Get saved comments from the "filing cabinet" or start with empty []
+    const [comments, setComments] = useState<any[]>(() => {
+        const saved = localStorage.getItem(`comments_post_${postId}`);
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    // 2. State for the text you are typing
+    const [textInput, setTextInput] = useState("");
+
+    // 3. Function to handle the "Post" button
+    const handlePost = () => {
+        if (textInput.trim() === "") return; // Don't post empty comments
+
+        const newComment = {
+            id: Date.now(),
+            userName: currentUser.name, // Who wrote it
+            text: textInput,            // What they wrote
+            avatar: `https://i.pravatar.cc/150?u=${currentUser.name}`
+        };
+
+        const updatedComments = [...comments, newComment];
+
+        // Update the screen (State)
+        setComments(updatedComments);
+        // Save to cabinet (LocalStorage)
+        localStorage.setItem(`comments_post_${postId}`, JSON.stringify(updatedComments));
+
+        // Clear the input box
+        setTextInput("");
+    };
+
     return (
         <div style={styles.container}>
             <div style={styles.header}>
@@ -11,21 +41,28 @@ export default function Comments({ onBack }: { onBack: () => void }) {
             </div>
 
             <div style={styles.chatArea}>
-                <Comment user="Tony Stark" text="Well, well, well... nice job, kid." avatar="https://i.pravatar.cc/150?u=ironman" />
-                <Comment user="Bruce Banner" text="SPORT GOOD. SMASH STRESS." avatar="https://i.pravatar.cc/150?u=hulk" />
+                {comments.map((c) => (
+                    <Comment key={c.id} text={c.text} avatar={c.avatar} />
+                ))}
             </div>
 
             <div style={styles.inputContainer}>
-                <img src="https://i.pravatar.cc/150?u=me" style={styles.smallAvatar} />
+                <img src={`https://i.pravatar.cc/150?u=${currentUser.name}`} style={styles.smallAvatar} />
                 <div style={styles.inputBox}>
-                    <input style={styles.input} placeholder="Write a comment..." />
-                    <button style={styles.postBtn}>Post</button>
+                    <input
+                        style={styles.input}
+                        placeholder="Write a comment..."
+                        value={textInput}
+                        onChange={(e) => setTextInput(e.target.value)}
+                    />
+                    <button style={styles.postBtn} onClick={handlePost}>Post</button>
                 </div>
             </div>
         </div>
     );
 }
 
+// Simple internal component for the bubble
 function Comment({ text, avatar }: any) {
     return (
         <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
