@@ -89,13 +89,33 @@ export default function App() {
         setActiveTab('community'); // Switch to community to see the new card
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('habiboo_current_session'); // Clear the session
+        setUser(null); // Reset user state to show Auth screen
+        setActiveTab('home'); // Reset tab for next login
+    };
+
+
     if (!user) return <Auth onAuth={handleAuth} />;
     if (activeRoom) {
         return (
-            <RoomView
-                room={activeRoom}
-                onBack={() => setActiveRoom(null)}
-            />
+            <div className="main" style={{ minHeight: '100vh', backgroundColor: '#F9F9F9' }}>
+                <div className="content-area" style={{ paddingBottom: '120px' }}>
+                    <RoomView
+                        room={activeRoom}
+                        onBack={() => setActiveRoom(null)}
+                        currentUser={user}
+                    />
+                </div>
+                {/* The Footer stays visible even inside a Room */}
+                <Footer
+                    activeTab={activeTab}
+                    onTabChange={(tab) => {
+                        setActiveRoom(null); // Close the room when switching tabs
+                        setActiveTab(tab);
+                    }}
+                />
+            </div>
         );
     }
 
@@ -198,6 +218,7 @@ export default function App() {
                         user={user}
                         onSave={handleUpdateUser}
                         onBack={() => setActiveTab('home')}
+                        onLogout={handleLogout}
                     />
                 )}
             </div>

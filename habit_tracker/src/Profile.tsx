@@ -8,10 +8,11 @@ interface ProfileProps {
         image?: string;
     };
     onSave: (updatedUser: any) => void;
+    onLogout: () => void;
     onBack: () => void; // Prop to handle navigation back to the dashboard
 }
 
-export default function Profile({ user, onSave, onBack }: ProfileProps) {
+export default function Profile({ user, onSave, onBack, onLogout}: ProfileProps) {
     const [name, setName] = useState(user.name);
     const [phone, setPhone] = useState(user.phone || '+491557589498129');
     const [email, setEmail] = useState(user.email);
@@ -50,6 +51,12 @@ export default function Profile({ user, onSave, onBack }: ProfileProps) {
                         />
                     </label>
                 </div>
+                <button
+                    onClick={onLogout}
+                    style={styles.logoutBtn}
+                >
+                    Log Out
+                </button>
             </div>
 
             {/* Form Fields */}
@@ -93,6 +100,19 @@ export default function Profile({ user, onSave, onBack }: ProfileProps) {
 }
 
 const styles: any = {
+
+    logoutBtn: {
+        width: '100%',
+        padding: '15px',
+        backgroundColor: '#fff',
+        color: '#FF4D4D',
+        border: '1px solid #FF4D4D',
+        borderRadius: '20px',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        marginTop: '40px',
+        cursor: 'pointer',
+    },
     pageWrapper: {
         backgroundColor: '#fff',
         minHeight: '100vh',

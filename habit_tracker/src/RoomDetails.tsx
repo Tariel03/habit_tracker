@@ -25,17 +25,7 @@ export default function RoomDetails({ room, onClose, onJoin }: ModalProps) {
                     {room.description}
                 </p>
 
-                <div style={modalStyles.goalSection}>
-                    <h4 style={modalStyles.goalHeader}>Goal</h4>
-                    {/* You can update this to room.goal if you add that field later */}
-                    <p style={modalStyles.goalText}>🏆 Strength training and endurance building</p>
-                </div>
-
                 <div style={modalStyles.statsRow}>
-                    <div style={modalStyles.statItem}>
-                        <span style={modalStyles.icon}>👥</span>
-                        <span>{room.members || 0}</span>
-                    </div>
                     <div style={modalStyles.statItem}>
                         <span style={modalStyles.icon}>{room.isPrivate ? '🔒' : '🔓'}</span>
                         <span>{room.isPrivate ? 'Private' : 'Public'}</span>
@@ -94,21 +84,57 @@ const modalStyles: any = {
         boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
     },
     closeBtn: {
-        position: 'absolute', top: '20px', left: '20px',
-        background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer',
+        position: 'absolute',
+        top: '20px',
+        left: '20px',
+        background: 'none',
+        border: 'none',
+        fontSize: '20px',
+        cursor: 'pointer',
         color: '#666'
     },
-    title: { color: '#9F7AEA', fontSize: '24px', fontWeight: 'bold', marginBottom: '15px' },
-    description: { fontSize: '14px', textAlign: 'left', color: '#444', lineHeight: '1.6', marginBottom: '20px' },
+    title: { color: '#9F7AEA',
+        fontSize: '24px',
+        fontWeight: 'bold',
+        marginBottom: '15px' },
+    description: {
+        fontSize: '14px',
+        textAlign: 'left',
+        color: '#444', lineHeight: '1.6',
+        marginBottom: '20px' },
     goalSection: { marginBottom: '25px' },
-    goalHeader: { color: '#9F7AEA', fontSize: '18px', margin: '0 0 8px 0' },
-    goalText: { fontSize: '14px', color: '#555', margin: 0 },
-    statsRow: { display: 'flex', justifyContent: 'center', gap: '40px', marginBottom: '25px' },
-    statItem: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '18px', fontWeight: '600' },
+    goalHeader: {
+        color: '#9F7AEA',
+        fontSize: '18px',
+        margin: '0 0 8px 0' },
+    goalText: {
+        fontSize: '14px',
+        color: '#555',
+        margin: 0 },
+    statsRow: {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '40px',
+        marginBottom: '25px' },
+    statItem: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        fontSize: '18px',
+        fontWeight: '600' },
     icon: { fontSize: '20px' },
-    passwordSection: { marginBottom: '25px', textAlign: 'center' },
-    passLabel: { display: 'block', marginBottom: '10px', fontSize: '15px', fontWeight: '500' },
-    inputWrapper: { position: 'relative', width: '100%', maxWidth: '250px', margin: '0 auto' },
+    passwordSection: {
+        marginBottom: '25px',
+        textAlign: 'center' },
+    passLabel: {
+        display: 'block',
+        marginBottom: '10px',
+        fontSize: '15px',
+        fontWeight: '500' },
+    inputWrapper: {
+        position: 'relative',
+        width: '100%', maxWidth: '250px',
+        margin: '0 auto' },
     input: {
         width: '100%',
         padding: '12px 15px',
